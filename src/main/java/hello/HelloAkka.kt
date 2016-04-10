@@ -42,12 +42,16 @@ class TestActor : UntypedActor() {
                 println("received ask")
                 val future: Future<Any> = ask(sender, MyActor.Greeting("Saeed"), 5000)
 
-//                future.onComplete(object : OnComplete<Object>() {
-//                    override fun onComplete(failure: Throwable?, success: Object?) {
-//                        throw UnsupportedOperationException()
-//                    }
-//                }, context.dispatcher())
-                Await.result(future, Duration.create(6, TimeUnit.SECONDS));
+                future.onComplete(object : OnComplete<Any?>() {
+                    override fun onComplete(failure: Throwable?, result: Any?) {
+                        if (failure != null) {
+                            println("We got a failure, handle it here")
+                        } else {
+                            println("result = " + result as String)
+                        }
+                    }
+                }, context.dispatcher())
+//                Await.result(future, Duration.create(6, TimeUnit.SECONDS));
             }
             else -> println("received unknown message")
         }
